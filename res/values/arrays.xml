@@ -5,7 +5,6 @@
     </string-array>
 
     <string-array name="entryvalues_mpd_output">
-        <item>opensles_android</item>
         <item>audiotrack</item>
     </string-array>
 </resources>
