@@ -19,12 +19,14 @@
 
 package be.deadba.ampd;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -33,6 +35,7 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.util.Log;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class MPDService extends Service implements LibMPD.OnErrorListener {
     private static final String TAG = "MPDService";
 
@@ -152,7 +155,8 @@ public class MPDService extends Service implements LibMPD.OnErrorListener {
         mCallbacks.finishBroadcast();
     }
 
-    private synchronized boolean start() {
+    @SuppressWarnings("deprecation")
+	private synchronized boolean start() {
         if (!mIsRunning && !LibMPD.isRunning()) {
             SharedPreferences sp = MPDConf.getSharedPreferences(this);
 
@@ -178,14 +182,30 @@ public class MPDService extends Service implements LibMPD.OnErrorListener {
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                     mainIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-            Notification notification = new Notification.Builder(this)
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+            	
+            	Notification notification;
+            	
+            	if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            		notification = new Notification.Builder(this)
                     .setContentTitle(getText(R.string.notification_title_mpd_running))
                     .setContentText(getText(R.string.notification_text_mpd_running))
                     .setSmallIcon(R.drawable.ic_notification)
                     .setContentIntent(contentIntent)
                     .getNotification();
+            	} else {
 
-            startForeground(R.string.notification_title_mpd_running, notification);
+            	    notification = new Notification(R.drawable.ic_notification,
+            				getText(R.string.notification_text_mpd_running), 0);
+            	    
+            	    // Set the info for the views that show in the notification panel.
+            	    notification.setLatestEventInfo(this, getText(R.string.notification_title_mpd_running),
+            	    getText(R.string.notification_text_mpd_running), contentIntent);            		
+            	}
+            	
+            	startForeground(R.string.notification_title_mpd_running, notification);
+            	
+            }
 
             signalStart();
 

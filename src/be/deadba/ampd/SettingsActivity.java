@@ -34,13 +34,13 @@ import android.os.Message;
 
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.preference.TwoStatePreference;
 
 import android.util.Log;
 
@@ -76,8 +76,8 @@ public class SettingsActivity extends PreferenceActivity implements ServiceConne
     private boolean mBound = false;
     private IMPDService mIMPDService = null;
 
-    private TwoStatePreference mRunPreference = null;
-    private TwoStatePreference mRunOnBootPreference = null;
+    private CheckBoxPreference mRunPreference = null;
+    private CheckBoxPreference mRunOnBootPreference = null;
 
     private boolean mRestart= false;
     private boolean mRunning = false;
@@ -400,12 +400,12 @@ public class SettingsActivity extends PreferenceActivity implements ServiceConne
             editor.commit();
         }
         if (key.equals("run")) {
-            mRunPreference = (TwoStatePreference) preference;
+            mRunPreference = (CheckBoxPreference) preference;
             mRun = stringValue.equals("true");
             onMPDStatePreferenceChange(false);
             return true;
         } if (key.equals("run_on_boot")) {
-            mRunOnBootPreference = (TwoStatePreference) preference;
+            mRunOnBootPreference = (CheckBoxPreference) preference;
             mRunOnBoot = stringValue.equals("true");
             if (mRunOnBoot)
                 mRun = true;
@@ -416,7 +416,7 @@ public class SettingsActivity extends PreferenceActivity implements ServiceConne
             return true;
         } else if (key.equals("mpd_music_directory")) {
             File file = new File(stringValue);
-            mDirValid = file.exists() && file.isDirectory() && file.canRead() && file.canExecute();
+            mDirValid = file.exists() && file.isDirectory() && file.canRead();//TODO && file.canExecute();
             onMPDStatePreferenceChange(true);
         } else if (key.equals("mpd_port")) {
             int port = 0;
@@ -478,7 +478,7 @@ public class SettingsActivity extends PreferenceActivity implements ServiceConne
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(
                 preference.getContext());
         String key = preference.getKey();
-        Object value = preference instanceof TwoStatePreference
+        Object value = preference instanceof CheckBoxPreference
                 ? Boolean.valueOf(sp.getBoolean(key, false))
                 : sp.getString(key, "");
 

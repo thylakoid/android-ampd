@@ -26,12 +26,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class MPDConf {
     private final static String TAG = "MPDConf";
     private final static String CONF_FILE = "mpd.conf";
@@ -46,8 +49,10 @@ public class MPDConf {
     private final static String AUTO_UPDATE_DEFAULT = "no";
 
 
-    public final static String DEFAULT_MUSIC_DIRECTORY = Environment.
-            getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath();
+	public final static String DEFAULT_MUSIC_DIRECTORY =
+    		( (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) ?
+    		Environment.getExternalStorageDirectory().getAbsolutePath() :
+    		Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath());
 
     private static abstract class Entry {
         private final String key;

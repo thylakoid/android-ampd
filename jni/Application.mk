@@ -2,6 +2,6 @@
 ifeq (1,$(NDK_ARCH_ALL))
 APP_ABI := armeabi-v7a armeabi x86 mips
 else
-APP_ABI := armeabi-v7a
+APP_ABI := armeabi
 endif
-APP_PLATFORM := android-14
+APP_PLATFORM := android-19

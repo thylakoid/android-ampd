@@ -28,6 +28,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import android.content.Context;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
 public class LibMPD {
@@ -68,7 +69,13 @@ public class LibMPD {
              */
             libPath = mContext.getFilesDir() + "/armeabi";
 
-            File apk = new File(mContext.getPackageCodePath());
+            File apk = null;
+			try {
+				apk = new File(mContext.getPackageManager().getApplicationInfo(mContext.getPackageName(), 0).sourceDir);
+			} catch (NameNotFoundException e1) {
+				e1.printStackTrace();
+			}//.getP..getPackageCodePath());
+			
             File outDir = new File(libPath);
 
             if (!outDir.exists() || apk.lastModified() > outDir.lastModified()) {
